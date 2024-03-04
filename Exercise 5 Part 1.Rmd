@@ -1,0 +1,172 @@
+---
+title: "exercise-05"
+author: "Jessica V"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+```
+
+# Step 1
+```{r}
+f <- "https://raw.githubusercontent.com/difiore/ada-2024-datasets/main/IMDB-movies.csv"
+d <- read_csv(f, col_names = TRUE)
+head(d)
+
+```
+
+# Step 2
+
+
+```{r}
+
+a <- d%>%
+  filter(startYear >1919) %>%
+  filter(startYear <1980) %>%
+  filter(runtimeMinutes <=180)%>%
+  filter(runtimeMinutes >=60) %>%
+  mutate(Decade = paste0(floor(ifelse(startYear<2000, startYear-1900, startYears)/10)*10, "'s")
+  
+  
+```
+
+Step 4
+
+Use a one-line statement to calculate the 
+population mean and population standard deviation
+in runtimeMinutes for each decade and save the results in a new dataframe called results.
+
+```{r}
+#mean(a$runtimeMinutes)
+
+aa <- a$runtimeMinutes[a$Decade == "20's"]
+m <- mean(aa)
+s <- length(aa)
+error <- qnorm(0.975)*152/sqrt(n)
+left <- m-error
+right <- m+error
+
+```
+
+
+
+
+Step 3
+plot histograms of the distribution of runtimeMinutes for each decade
+
+```{r}
+par(mfrow = c(1, 2))  # sets up two panels side by side
+attach(d)  # lets us use variable names without specifying the data frame!
+hist(runtimeMinutes) 
+
+#freq = FALSE, col = "red", main = "Plot 1", xlab = "dec",
+  #  ylab = "Run Time Minutes", ylim = c(0, 300))
+
+#hist(log(startYear), freq = FALSE, col = "red", main = "Plot 2", xlab = "log(area)", ylab = "density",
+  #  ylim = c(0, 100))
+```
+```{r}
+attach(a)
+#library(Hmisc)
+hist.data.frame(a_startYear)
+a_runtime <- a(runtimeMinutes)
+```
+
+```{r}
+a %>% 
+  hist(startYear) %>% 
+  ggplot(aes(value)) + 
+  geom_histogram() + 
+  facet_wrap(~name, scales = "free")
+```
+
+
+```{r}
+hist(log(population), freq = FALSE, col = "red", main = "Plot 1", xlab = "log(population size)",
+    ylab = "density", ylim = c(0, 0.2))
+hist(log(area), freq = FALSE, col = "red", main = "Plot 2", xlab = "log(area)", ylab = "density",
+    ylim = c(0, 0.2))
+
+```
+
+```{r}
+attach(a)
+par(mfrow=c(1, 5))
+
+# Create side-by-side histograms
+hist(startYear$runtimeMinutes, main="Histogram of ", xlab="Decade", ylim = c(0, 300),
+     ylab="runtimeMinutes", col="lightblue", xlim=c(10, 35))
+#hist(mtcars$hp, main="Histogram of Horsepower", xlab="Horsepower", 
+   #  ylab="Frequency", col="lightgreen")
+```
+```{r}
+#par(mfrow = c(1, 2))  # sets up two panels side by side
+attach(d)  # lets us use variable names without specifying the data frame!
+#hist(runtimeMinutes, freq = FALSE, col = "red", main = "Plot 1", xlab = "Decade",
+    #ylab = "runtimeMinutes", ylim = c(0, 300))
+#hist(log(area), freq = FALSE, col = "red", main = "Plot 2", xlab = "log(area)", ylab = "density",
+   # ylim = c(0, 0.2))
+
+hist(runtimeMinutes), freq = FALSE, col = "red", main = "Plot 2", xlab = "(runtimeMinutes)", ylab = "Decade",  ylim = c(0, 0.2))
+#abline(v = mean(log(area), na.rm = TRUE))
+```
+```{r}
+#hist(d$runtimeMinutes)
+# load library ggplot2
+#library(ggplot2)
+  
+# set theme
+theme_set(theme_bw(12))
+ 
+# create x vector
+xAxis <- rnorm(500)             
+ 
+# create groups in variable using conditional 
+# statements
+group <- rep(1, 500)              
+group[xAxis >  20] <- 2
+group[xAxis > 30] <- 3
+group[xAxis > 40] <- 4
+group[xAxis > 50] <- 5
+group[xAxis > 60] <- 6
+ 
+# create sample data frame
+sample_data <- data.frame(xAxis, group) 
+  
+ggplot(a, aes(x=xAxis, fill = as.factor(group)))+
+   geom_histogram( color='#e9ecef', alpha=0.6, position='identi
+```
+```{r}
+a %>% 
+  pivot_longer(cols =11 ) %>% 
+  ggplot(aes(value)) + 
+  geom_histogram() + 
+  facet_wrap(~name, scales = "free")
+
+```
+
+#Extra Notes for JEssica below:
+Trial and Error
+
+ssss<- d%>%
+  
+filter(grepl(pattern = "^[>=1920]", startYear, )) %>%
+  
+filter(grepl(pattern = "[<=1979]", startYear, )) %>%
+
+filter(grepl(pattern = "[>=60]", runtimeMinutes, )) %>%
+
+filter(grepl(pattern = "[<=180]", runtimeMinutes, ))
+
+
+notes
+s<-filter(d, grepl(pattern = "[1920-1979]", startYear))
+
+ss<-filter(d, grepl(pattern = "[>60]", runtimeMinutes))
+
+sss<- filter(d, grepl(pattern = "[<180]", runtimeMinutes))
+
