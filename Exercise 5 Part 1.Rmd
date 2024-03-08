@@ -12,6 +12,7 @@ library(dplyr)
 ```
 
 # Step 1
+## Here I load the “IMDB-movies.csv” dataset as a “tibble” named d
 ```{r}
 f <- "https://raw.githubusercontent.com/difiore/ada-2024-datasets/main/IMDB-movies.csv"
 d <- read_csv(f, col_names = TRUE)
@@ -21,7 +22,7 @@ head(d)
 
 # Step 2
 
-
+Here I Use a one-line statement to filter the dataset to include just movies from 1920 to 1979 and movies that are between 1 and 3 hours long (runtimeMinutes >= 60 and runtimeMinutes <= 180), and add a new column that codes the startYear into a new variable, decade (“20s”, “30s”, …“70s”).
 ```{r}
 
 a <- d%>%
@@ -29,71 +30,129 @@ a <- d%>%
   filter(startYear <1980) %>%
   filter(runtimeMinutes <=180)%>%
   filter(runtimeMinutes >=60) %>%
-  mutate(Decade = paste0(floor(ifelse(startYear<2000, startYear-1900, startYears)/10)*10, "'s")
+  mutate(decade = if_else(startYear >=2000,
+                          paste0(startYear %/% 10 * 10, "'s"),
+                          paste0((startYear - 1900) %/% 10 * 10, "'s")))
   
-  
+
+```
+#Step 3
+## Here I use {ggplot2} to plot histograms of the distribution of runtimeMinutes for each decade.
+```{r}
+#par(mfrow = c(2,5))
+#hist((d), freq = FALSE, col = "white", main = "Title", x lab = "x title", ylab = "y title", y lim = c(0, 0.2))
+
+
+
+#d <- a$runtimeMinutes
+#d
+
+#histo<- hist(d) 
+#histo + facet_wrap(~decade, ncol = 5)
+
+p <- ggplot(a, aes(x = runtimeMinutes)) +
+  geom_histogram(color = "black", fill = "blue") +
+  ggtitle("Distribution of Run Time for Movies by Decade") +
+  ylab("Number of Movies") +
+  xlab("Run Time Minutes") +
+  facet_wrap(~ decade)
+p
+#a <- d%>%
+ # mutate(dec = if_else(startYear >=2000,
+  #                        paste0(startYear %/% 10 * 10,""),
+   #                       paste0((startYear - 1900) %/% 10 * 10,"")))
+#d <- a$runtimeMinutes
+#d
+#hist(d) 
+
+#hist(d ~ a$decade)
+     
+# hist(d, freq = FALSE, col = "red", main = "Title", xlab = "x title", ylab = "y title",
+#    ylim = c(0, 0.2))    
+     #boxplot(log(a$Body_mass_female_mean) ~ a$Family)
+
+
 ```
 
-Step 4
+#Step 4
 
-Use a one-line statement to calculate the 
-population mean and population standard deviation
-in runtimeMinutes for each decade and save the results in a new dataframe called results.
+##Here I use a one-line statement to calculate the population mean and population standard deviation in runtimeMinutes for each decade and save the results in a new dataframe called results.
 
 ```{r}
+#results <- (summarize(a, .by = decade, mean(runtimeMinutes, na.rm =TRUE, sd(runtimeMinutes, na.rm = TRUE))
+
+                    
+
+results <- summarize(a, .by = decade, mean=mean(runtimeMinutes, na.rm =TRUE), sd=sd(runtimeMinutes, na.rm = TRUE))
+
+#(summarize(a, .by = decade, mean(runtimeMinutes, na.rm =TRUE, sd(runtimeMinutes, na.rm = TRUE))
+
+                      #+ facet_wrap(~ decade)
+
+#mean <- mean(mean, data = a$runtimeMinutes ~ a$decade, na.rm = FALSE)
+#mean
 #mean(a$runtimeMinutes)
 
-aa <- a$runtimeMinutes[a$Decade == "20's"]
-m <- mean(aa)
-s <- length(aa)
-error <- qnorm(0.975)*152/sqrt(n)
-left <- m-error
-right <- m+error
+#aa <- a$runtimeMinutes[a$Decade == "20's"]
+#m <- mean(aa)
+#s <- length(aa)
+#error <- qnorm(0.975)*152/sqrt(n)
+#left <- m-error
+#right <- m+error
+
+#summarize function dyplr to the dataframe and summarize what I want: i cand do sd for sample
 
 ```
 
+#Step 5
+##
+```{r}
+
+
+```
 
 
 
 Step 3
 plot histograms of the distribution of runtimeMinutes for each decade
 
-```{r}
-par(mfrow = c(1, 2))  # sets up two panels side by side
-attach(d)  # lets us use variable names without specifying the data frame!
-hist(runtimeMinutes) 
+
+histogram(a, main = paste0("runtimeMinutes ",
+    mu, "decade", sigma), type = "density", center = mu)
+
+#par(mfrow = c(1, 2))  # sets up two panels side by side
+#attach(d)  # lets us use variable names without specifying the data frame!
+#hist(runtimeMinutes) 
 
 #freq = FALSE, col = "red", main = "Plot 1", xlab = "dec",
   #  ylab = "Run Time Minutes", ylim = c(0, 300))
 
 #hist(log(startYear), freq = FALSE, col = "red", main = "Plot 2", xlab = "log(area)", ylab = "density",
   #  ylim = c(0, 100))
-```
 ```{r}
-attach(a)
+#attach(a)
 #library(Hmisc)
-hist.data.frame(a_startYear)
-a_runtime <- a(runtimeMinutes)
+#hist.data.frame(a_startYear)
+#a_runtime <- a(runtimeMinutes)
 ```
 
-```{r}
+
 a %>% 
   hist(startYear) %>% 
   ggplot(aes(value)) + 
   geom_histogram() + 
   facet_wrap(~name, scales = "free")
-```
 
 
-```{r}
+
 hist(log(population), freq = FALSE, col = "red", main = "Plot 1", xlab = "log(population size)",
     ylab = "density", ylim = c(0, 0.2))
 hist(log(area), freq = FALSE, col = "red", main = "Plot 2", xlab = "log(area)", ylab = "density",
     ylim = c(0, 0.2))
 
-```
 
-```{r}
+
+#```{r}
 attach(a)
 par(mfrow=c(1, 5))
 
@@ -102,10 +161,10 @@ hist(startYear$runtimeMinutes, main="Histogram of ", xlab="Decade", ylim = c(0, 
      ylab="runtimeMinutes", col="lightblue", xlim=c(10, 35))
 #hist(mtcars$hp, main="Histogram of Horsepower", xlab="Horsepower", 
    #  ylab="Frequency", col="lightgreen")
-```
-```{r}
+#```
+#```{r}
 #par(mfrow = c(1, 2))  # sets up two panels side by side
-attach(d)  # lets us use variable names without specifying the data frame!
+#attach(d)  # lets us use variable names without specifying the data frame!
 #hist(runtimeMinutes, freq = FALSE, col = "red", main = "Plot 1", xlab = "Decade",
     #ylab = "runtimeMinutes", ylim = c(0, 300))
 #hist(log(area), freq = FALSE, col = "red", main = "Plot 2", xlab = "log(area)", ylab = "density",
@@ -113,8 +172,8 @@ attach(d)  # lets us use variable names without specifying the data frame!
 
 hist(runtimeMinutes), freq = FALSE, col = "red", main = "Plot 2", xlab = "(runtimeMinutes)", ylab = "Decade",  ylim = c(0, 0.2))
 #abline(v = mean(log(area), na.rm = TRUE))
-```
-```{r}
+#```
+#```{r}
 #hist(d$runtimeMinutes)
 # load library ggplot2
 #library(ggplot2)
@@ -140,14 +199,14 @@ sample_data <- data.frame(xAxis, group)
 ggplot(a, aes(x=xAxis, fill = as.factor(group)))+
    geom_histogram( color='#e9ecef', alpha=0.6, position='identi
 ```
-```{r}
+#```{r}
 a %>% 
   pivot_longer(cols =11 ) %>% 
   ggplot(aes(value)) + 
   geom_histogram() + 
   facet_wrap(~name, scales = "free")
 
-```
+#```
 
 #Extra Notes for JEssica below:
 Trial and Error
@@ -170,3 +229,74 @@ ss<-filter(d, grepl(pattern = "[>60]", runtimeMinutes))
 
 sss<- filter(d, grepl(pattern = "[<180]", runtimeMinutes))
 
+CHALLENGE 2
+```
+Step 1 Load data
+```{r}
+z<- "https://raw.githubusercontent.com/difiore/ada-2024-datasets/main/zombies.csv"
+z<-read_csv(z, col_names = TRUE)
+```
+
+
+Step 2
+Calculate the population mean and standard deviation for each quantitative random variable in the dataset (height, weight, age, number of zombies killed, and years of education).
+
+```{r}
+library(mosaic)
+mean(z$height)
+
+#summarize function dyplr to the dataframe and summarize what I want: i cand do sd for sample
+
+#Population mean of height
+height_stats <- fav_stats(z$height)
+
+height_stats$mean
+#Population mean of weight
+weight_stats <- fav_stats(z$weight)
+weight_stats$mean
+#Population mean of age
+age_stats <- fav_stats(z$age)
+age_stats$mean
+#Population mean of number of zombies killed
+zombies_killed_stats <- fav_stats(z$zombies_killed)
+zombies_killed_stats$mean
+#Population mean of years of education
+years_of_education_stats <- fav_stats(z$years_of_education)
+years_of_education_stats$mean
+
+
+
+
+#means <- colMeans(z[, c("height", "weight", "age", "zombies_killed", "years_of_education")])
+#sds <- apply(z[, c("height", "weight", "age", "zombies_killed", "years_of_education")], 2, sd)
+```
+Step 3 Use {ggplot} and make boxplots of each of these variables by gender.
+```{r}
+boxplot(z$height ~ z$gender)
+ boxplot(z$weight ~ z$gender)
+ boxplot(z$age ~ z$gender)
+  boxplot(z$zombies_killed ~ z$gender)
+   boxplot(z$years_of_education ~ z$gender)
+
+#boxplot(lapply(names(z)[c("height", "weight", "age", "zombies_killed", "years_of_education")], function(var) {
+ # ggplot(z, aes(x = gender, y = get(var), fill = gender)) +
+  #  geom_boxplot() +
+   # labs(title = paste("Box plot of", var, "by gender"), x = "Gender", y = var)
+#}))
+
+
+```
+
+Step 4Use {ggplot} and make scatterplots of height and weight in relation to age (i.e., use age as the  variable), using different colored points for males versus females. Do these variables seem to be related? In what way?
+
+```{r}
+ggplot(z, aes(x = age, y = height, color = gender)) +
+  geom_point() +
+  labs(title = "Scatterplot of Height vs. Age", x = "Age", y = "Height")
+
+# Create a scatterplot of weight vs. age, colored by gender
+ggplot(z, aes(x = age, y = weight, color = gender)) +
+  geom_point() +
+  labs(title = "Scatterplot of Weight vs. Age", x = "Age", y = "Weight")
+
+```
