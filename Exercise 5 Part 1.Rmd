@@ -36,7 +36,7 @@ a <- d%>%
   
 
 ```
-#Step 3
+# Step 3
 ## Here I use {ggplot2} to plot histograms of the distribution of runtimeMinutes for each decade.
 ```{r}
 
@@ -50,7 +50,7 @@ p
 
 ```
 
-#Step 4
+# Step 4
 
 ##Here I use a one-line statement to calculate the population mean and population standard deviation in runtimeMinutes for each decade and save the results in a new dataframe called results.
 
@@ -64,11 +64,20 @@ results <- summarize(a, .by = decade, mean=mean(runtimeMinutes, na.rm =TRUE), sd
 
 ```
 
-#Step 5
-##
+# Step 5
+##Here I 
+
+draw a single sample of 100 movies, without replacement, from each decade 
+
+and calculate the single sample mean and single sample standard deviation in runtimeMinutes for each decades.
+Recall that your single sample mean for each decade is an estimate of the population mean for each decade.
 ```{r}
 
+step5 <- slice_sample(a, n=100, by = decade, replace = FALSE)
 
+#sd=sd(runtimeMinutes na.rm = TRUE)
+
+step5
 ```
 
 
@@ -108,15 +117,15 @@ a %>%
 #```
 
 
-CHALLENGE 2
-Step 1 Load data
+# CHALLENGE 2
+#  Step 1 Load data
 ```{r}
 z<- "https://raw.githubusercontent.com/difiore/ada-2024-datasets/main/zombies.csv"
 z<-read_csv(z, col_names = TRUE)
 ```
 
 
-Step 2
+# Step 2
 Calculate the population mean and standard deviation for each quantitative random variable in the dataset (height, weight, age, number of zombies killed, and years of education).
 
 ```{r}
@@ -148,7 +157,7 @@ years_of_education_stats$mean
 #means <- colMeans(z[, c("height", "weight", "age", "zombies_killed", "years_of_education")])
 #sds <- apply(z[, c("height", "weight", "age", "zombies_killed", "years_of_education")], 2, sd)
 ```
-Step 3 Use {ggplot} and make boxplots of each of these variables by gender.
+# Step 3 Use {ggplot} and make boxplots of each of these variables by gender.
 ```{r}
 boxplot(z$height ~ z$gender)
  boxplot(z$weight ~ z$gender)
@@ -159,7 +168,7 @@ boxplot(z$height ~ z$gender)
 
 ```
 
-Step 4Use {ggplot} and make scatterplots of height and weight in relation to age (i.e., use age as the  variable), using different colored points for males versus females. Do these variables seem to be related? In what way?
+# Step 4 Use {ggplot} and make scatterplots of height and weight in relation to age (i.e., use age as the  variable), using different colored points for males versus females. Do these variables seem to be related? In what way?
 
 ```{r}
 ggplot(z, aes(x = age, y = height, color = gender)) +
@@ -175,7 +184,7 @@ ggplot(z, aes(x = age, y = weight, color = gender)) +
 
 
 
-TRIAL AND ERROR NOTES
+# TRIAL AND ERROR NOTES for JEssica
 
 #par(mfrow = c(2,5))
 #hist((d), freq = FALSE, col = "white", main = "Title", x lab = "x title", ylab = "y title", y lim = c(0, 0.2))
@@ -197,7 +206,7 @@ TRIAL AND ERROR NOTES
 
 #hist(d ~ a$decade)
      
-# hist(d, freq = FALSE, col = "red", main = "Title", xlab = "x title", ylab = "y title",
+#hist(d, freq = FALSE, col = "red", main = "Title", xlab = "x title", ylab = "y title",
 #    ylim = c(0, 0.2))    
      #boxplot(log(a$Body_mass_female_mean) ~ a$Family)
      
