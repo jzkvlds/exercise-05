@@ -65,19 +65,22 @@ results <- summarize(a, .by = decade, mean=mean(runtimeMinutes, na.rm =TRUE), sd
 ```
 
 # Step 5
-##Here I 
+##Here I draw a single sample of 100 movies, without replacement, from each decade called step 5 
 
-draw a single sample of 100 movies, without replacement, from each decade 
+then I  calculated the single sample mean and single sample standard deviation in runtimeMinutes for each decades named mean_values and sd_values.
 
-and calculate the single sample mean and single sample standard deviation in runtimeMinutes for each decades.
-Recall that your single sample mean for each decade is an estimate of the population mean for each decade.
 ```{r}
 
 step5 <- slice_sample(a, n=100, by = decade, replace = FALSE)
-
-#sd=sd(runtimeMinutes na.rm = TRUE)
-
 step5
+
+mean_values <- tapply(a$runtimeMinutes, a$decade, mean)
+mean_values
+
+sd_values <- tapply(a$runtimeMinutes, a$decade, sd)
+sd_values
+
+
 ```
 
 

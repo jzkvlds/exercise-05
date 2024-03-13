@@ -442,34 +442,37 @@ results &lt;- summarize(a, .by = decade, mean=mean(runtimeMinutes, na.rm =TRUE),
 </div>
 <div id="step-5" class="section level1">
 <h1>Step 5</h1>
-<p>##Here I</p>
-<p>draw a single sample of 100 movies, without replacement, from each
-decade</p>
-<p>and calculate the single sample mean and single sample standard
-deviation in runtimeMinutes for each decades. Recall that your single
-sample mean for each decade is an estimate of the population mean for
-each decade.</p>
+<p>##Here I draw a single sample of 100 movies, without replacement,
+from each decade called step 5</p>
+<p>then I calculated the single sample mean and single sample standard
+deviation in runtimeMinutes for each decades named mean_values and
+sd_values.</p>
 <pre class="r"><code>step5 &lt;- slice_sample(a, n=100, by = decade, replace = FALSE)
-
-#sd=sd(runtimeMinutes na.rm = TRUE)
-
 step5</code></pre>
 <pre><code>## # A tibble: 600 × 11
 ##    tconst   titleType primaryTitle startYear runtimeMinutes genres averageRating
 ##    &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;            &lt;dbl&gt;          &lt;dbl&gt; &lt;chr&gt;          &lt;dbl&gt;
-##  1 tt00184… movie     The Student…      1927            106 Drama…           7.6
-##  2 tt00204… movie     Old and New       1929            121 Drama            7.2
-##  3 tt00143… movie     Our Hospita…      1923             65 Comed…           7.8
-##  4 tt00199… movie     Hallelujah        1929            109 Drama…           6.8
-##  5 tt00153… movie     Strike            1925             82 Drama            7.6
-##  6 tt00201… movie     Marianne          1929            111 Drama…           6.2
-##  7 tt00174… movie     Sparrows          1926            110 Drama            7.3
+##  1 tt00192… movie     The Patsy         1928             78 Comed…           7.4
+##  2 tt00182… movie     October (Te…      1927            142 Drama…           7.4
+##  3 tt00166… movie     Ben-Hur: A …      1925            143 Adven…           7.8
+##  4 tt00110… movie     Leaves From…      1920            167 Drama            6.7
+##  5 tt00201… movie     Lucky Star        1929            100 Drama…           7.8
+##  6 tt00180… movie     The End of …      1927             85 Drama            7.3
+##  7 tt00158… movie     The Freshman      1925             77 Comed…           7.5
 ##  8 tt00178… movie     When Boys L…      1927             80 Adven…           6.2
-##  9 tt00183… movie     7th Heaven        1927            110 Drama…           7.7
-## 10 tt00141… movie     The Hunchba…      1923            133 Drama…           7.3
+##  9 tt00194… movie     Speedy            1928             85 Actio…           7.7
+## 10 tt00199… movie     Woman in th…      1929            156 Comed…           7.3
 ## # ℹ 590 more rows
 ## # ℹ 4 more variables: numVotes &lt;dbl&gt;, nconst &lt;chr&gt;, director &lt;chr&gt;,
 ## #   decade &lt;chr&gt;</code></pre>
+<pre class="r"><code>mean_values &lt;- tapply(a$runtimeMinutes, a$decade, mean)
+mean_values</code></pre>
+<pre><code>##      20&#39;s      30&#39;s      40&#39;s      50&#39;s      60&#39;s      70&#39;s 
+##  96.25658  90.30000  97.20332  98.94820 105.58586 103.75000</code></pre>
+<pre class="r"><code>sd_values &lt;- tapply(a$runtimeMinutes, a$decade, sd)
+sd_values</code></pre>
+<pre><code>##     20&#39;s     30&#39;s     40&#39;s     50&#39;s     60&#39;s     70&#39;s 
+## 26.20133 17.28879 19.12372 19.20646 21.23202 17.95934</code></pre>
 <p>Step 3 plot histograms of the distribution of runtimeMinutes for each
 decade</p>
 <p>histogram(a, main = paste0(“runtimeMinutes”, mu, “decade”, sigma),
