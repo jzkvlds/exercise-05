@@ -83,7 +83,12 @@ sd_values
 
 ```
 
+# Step 6
+#Calculate for each decade the standard error around your estimate of the population mean runtimeMinutes based on the standard deviation and sample size (n=100 movies) of your single sample.
 
+```{r}
+
+```
 
 Step 3
 plot histograms of the distribution of runtimeMinutes for each decade
@@ -173,6 +178,8 @@ boxplot(z$height ~ z$gender)
 
 # Step 4 Use {ggplot} and make scatterplots of height and weight in relation to age (i.e., use age as the  variable), using different colored points for males versus females. Do these variables seem to be related? In what way?
 
+Yes, there seems to be a positive correlation between weight and age for both females and males. The average male weight for this sample size seems higher(heavier) than the female average.
+
 ```{r}
 ggplot(z, aes(x = age, y = height, color = gender)) +
   geom_point() +
@@ -183,6 +190,104 @@ ggplot(z, aes(x = age, y = weight, color = gender)) +
   geom_point() +
   labs(title = "Scatterplot of Weight vs. Age", x = "Age", y = "Weight")
 
+```
+
+#Step 5
+
+Using histograms and Q-Q plots, check whether each of the quantitative variables seem to be drawn from a normal distribution. Which seem to be and which do not?
+variables =(height, weight, age, number of zombies_killed, and years_of_education
+
+#Here I create histograms of each quantitative variable.
+```{r}
+HeightHist<- ggplot(z, aes(x = height)) +
+  geom_histogram(color = "black", fill = "blue") +
+  ggtitle("Distribution of Height for entire Population") +
+  ylab("Total") +
+  xlab("Height in Inches")
+HeightHist
+
+WeightHist<- ggplot(z, aes(x = weight)) +
+  geom_histogram(color = "black", fill = "purple") +
+  ggtitle("Distribution of Weight for Entire Population") +
+  ylab("Total") +
+  xlab("Weight in Pounds")
+WeightHist
+
+AgeHist<- ggplot(z, aes(x = age)) +
+  geom_histogram(color = "black", fill = "pink") +
+  ggtitle("Distribution of Age for Entire Population") +
+  ylab("Total") +
+  xlab("Age in Years")
+AgeHist
+
+zombies_killedHist<- ggplot(z, aes(x = zombies_killed)) +
+  geom_histogram(color = "black", fill = "lime green", bins = 16) +
+  ggtitle("Distribution of Zombies Killed per Person for Entire Population") +
+  ylab("Total") +
+  xlab("Zombies Killed per Person")
+zombies_killedHist
+
+years_of_educationHist<- ggplot(z, aes(x = years_of_education)) +
+  geom_histogram(color = "black", fill = "orange", bins = 10) +
+  ggtitle("Distribution of Years of Education for Entire Population") +
+  ylab("Total") +
+  xlab("Years of Education")
+years_of_educationHist
+  
+
+```
+
+#Here I create Q-Q plots of each quiantitative variable
+variables =(height, weight, age, number of zombies_killed, and years_of_education
+```{r}
+
+qqnorm(z$height, main = "Q-Q plot for Height") 
+qqline(z$height)
+
+qqnorm(z$weight, main = "Q-Q plot for Weight")
+qqline(z$weight)
+
+qqnorm(z$age, main = "Q-Q plot for Age")
+qqline(z$age)
+
+qqnorm(z$zombies_killed, main = "Q-Q plot for Zombies Killed per Person")
+qqline(z$zombies_killed)
+
+qqnorm(z$years_of_education, main = "Q-Q plot for Years of Education per Person")
+qqline(z$years_of_education)
+
+```
+
+# Step 6
+Here I sample ONE subset of 50 zombie apocalypse survivors (without replacement) from this population and calculate the mean and sample standard deviation for each variable. 
+
+Also estimate the standard error for each variable based on this one sample and use that to construct a theoretical 95% confidence interval for each mean. You can use either the standard normal or a Student’s t distribution to derive the critical values needed to calculate the lower and upper limits of the CI.
+
+```{r}
+survivorsubset <- slice_sample(z, n=50, replace = FALSE)
+print(survivorsubset)
+
+
+survivormean_height <- mean(survivorsubset$height)
+survivormean_height
+
+survivormean_weight <- mean(survivorsubset$weight)
+survivormean_weight
+
+survivormean_age <- mean(survivorsubset$age)
+survivormean_age
+
+survivormean_zombies_killed <- mean(survivorsubset$zombies_killed)
+survivormean_zombies_killed
+
+
+survivormean_years_of_education <- mean(survivorsubset$years_of_education)
+survivormean_years_of_education
+
+#mean_values
+
+#sd_values <- tapply(z$runtimeMinutes, a$decade, sd)
+#sd_values
 ```
 
 
