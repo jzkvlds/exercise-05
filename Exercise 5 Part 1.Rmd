@@ -22,7 +22,7 @@ head(d)
 
 # Step 2
 
-Here I Use a one-line statement to filter the dataset to include just movies from 1920 to 1979 and movies that are between 1 and 3 hours long (runtimeMinutes >= 60 and runtimeMinutes <= 180), and add a new column that codes the startYear into a new variable, decade (“20s”, “30s”, …“70s”).
+Here I use a one-line statement to filter the dataset to include just movies from 1920 to 1979 and movies that are between 1 and 3 hours long (runtimeMinutes >= 60 and runtimeMinutes <= 180), and add a new column that codes the startYear into a new variable, decade (“20s”, “30s”, …“70s”).
 ```{r}
 
 a <- d%>%
@@ -34,7 +34,7 @@ a <- d%>%
                           paste0(startYear %/% 10 * 10, "'s"),
                           paste0((startYear - 1900) %/% 10 * 10, "'s")))
   
-
+a
 ```
 # Step 3
 ## Here I use {ggplot2} to plot histograms of the distribution of runtimeMinutes for each decade.
@@ -47,6 +47,7 @@ p <- ggplot(a, aes(x = runtimeMinutes)) +
   xlab("Run Time Minutes") +
   facet_wrap(~ decade)
 p
+
 
 ```
 
@@ -61,11 +62,12 @@ p
 
 results <- summarize(a, .by = decade, mean=mean(runtimeMinutes, na.rm =TRUE), sd=sd(runtimeMinutes, na.rm = TRUE))
 
+results
 
 ```
 
 # Step 5
-##Here I draw a single sample of 100 movies, without replacement, from each decade called step 5 
+##Here I draw a single sample of 100 movies, without replacement, from each decade called step5 
 
 then I  calculated the single sample mean and single sample standard deviation in runtimeMinutes for each decades named mean_values and sd_values.
 
@@ -74,22 +76,160 @@ then I  calculated the single sample mean and single sample standard deviation i
 step5 <- slice_sample(a, n=100, by = decade, replace = FALSE)
 step5
 
+#mean values and sd values for all data a
 mean_values <- tapply(a$runtimeMinutes, a$decade, mean)
 mean_values
 
 sd_values <- tapply(a$runtimeMinutes, a$decade, sd)
 sd_values
 
+#mean values and sd values for data step5 (100 movies)
+
+mean_valuesstep5 <- tapply(step5$runtimeMinutes, step5$decade, mean)
+mean_valuesstep5
+
+sd_valuesstep5 <- tapply(step5$runtimeMinutes, step5$decade, sd)
+sd_valuesstep5
+
 
 ```
 
-# Step 6
+# Step 6**
 #Calculate for each decade the standard error around your estimate of the population mean runtimeMinutes based on the standard deviation and sample size (n=100 movies) of your single sample.
 
 ```{r}
 
+#standard error for all data a
+standarderror <- lm(data=a, runtimeMinutes ~ decade)
+standarderror
+#standard error for data setp5 (100 movies)
+
+standarderrorstep5 <- lm(data=step5, runtimeMinutes ~ decade)
+standarderrorstep5
 ```
 
+Step 7
+Compare these estimates to the actual population mean runtimeMinutes for each decade and to the calculated SE in the population mean for samples of size 100 based on the population standard deviation for each decade.
+
+
+```{r}
+
+sd_values
+sd_valuesstep5
+
+mean_values
+mean_valuesstep5
+
+standarderror
+standarderrorstep5
+```
+Step 8
+Here I generate a sampling distribution of mean runtimeMinutes for each decade by 
+
+[a] drawing 1000 random samples of 100 movies from each decade, without replacement,
+
+and, for each sample,
+
+[b] calculating the mean runtimeMinutes and the standard deviation in runtimeMinutes for each decade.
+
+
+```{r}
+
+#PART A using do(reps)
+library(mosaic)
+# using `do(reps) *` from {mosaic} to generate a sampling distribution
+n=100
+reps <- 1000
+
+  sampling_distribution <- do(reps) * {
+  sampled_data <- step5 %>%
+    group_by(decade) %>%
+    do(sample_n(., n, replace = FALSE))
+  
+#B calculating the mean runtime minutes and SD in runtime minutes for each decade
+  stats <- sampled_data %>%
+    group_by(decade) %>%
+    summarise(mean_runtime = mean(runtimeMinutes, na.rm = TRUE),
+              sd_runtime = sd(runtimeMinutes, na.rm = TRUE))
+
+  stats
+}
+
+# Flatten the result
+sampling_distribution_df <- as.data.frame(sampling_distribution)
+
+#These are just my notes at previous attempts
+#Attempt number 1
+#samp_dist_mean <- do(reps) * mean(~runtimeMinutes ~ decade, data = sample_n(step5, size = n, replace = FALSE))
+#samp_dist_mean
+
+#library(dplyr)
+#library(purrr)
+
+#BY DECADE try 1
+
+#samp_dist_mean <- replicate(reps, {
+ # sample_data <- sample_n(step5, size = n, replace = FALSE)
+  #sample_mean <- sample_data %>%
+   # group_by(decade) %>%
+    #summarise(mean_runtime = mean(runtimeMinutes, na.rm = TRUE))
+  #return(sample_mean)
+#}, simplify = FALSE)
+
+#samp_dist_mean_df <- bind_rows(samp_dist_mean, .id = "replicate")
+
+#samp_dist_mean_df
+```
+
+```{r}
+#PART B try 1
+#calculating the mean runtimeMinutes and the standard deviation in runtimeMinutes for each decade.
+library(radiant)
+
+aggregate(step5$runtimeMinutes, by = list(step5$decade), FUN = mean)
+aggregate(step5$runtimeMinutes, by = list(step5$decade), FUN = sd)
+```
+
+Step 9
+Then, calculate the mean and the standard deviation of the sampling distribution of sample means for each decade and plot a histogram of the sampling distribution for each decade. What shape does it have?
+the mean has a normal distribution shape
+unlike the standard deviation histogram
+```{r}
+
+# generates a sampling distribution
+mean_plot <- histogram(~mean_runtime, data = sampling_distribution, xlab = "Sampling Distribution of mean runtimeMinutes for each decade")
+mean_plot
+
+
+sd_plot <- histogram(~sd_runtime, data = sampling_distribution_df, xlab = "Sampling Distribution of mean runtimeMinutes for each decade")
+sd_plot
+
+#sd_plot <- histogram(~ sd, data = sampling_distribution_df,
+ #                    xlab = "Sampling Distribution of Standard Deviations")
+#print(sd_plot)
+
+#samp_dist_median <- do(reps) * median(~runtimeMinutes, data = sample_n(sampling_distribution_df, size = n,
+    #replace = FALSE))
+
+#samp_dist_median
+
+# generates a sampling distribution
+#median_plot <- histogram(~median, data = samp_dist_median, xlab = "Sampling Distribution of median runtimeMinutes for each decade")
+#median_plot
+
+#mean_plot2 <- histogram(~mean, data = samp_dist_mean, xlab = "Sampling Distribution of mean runtimeMinutes for each decade")
+#mean_plot
+
+
+#sd_plot2 <- histogram(~sd, data = , xlab = "Sampling Distribution of mean runtimeMinutes for each decade")
+#sd_plot
+```
+
+Step 10
+
+Finally, compare the standard error in runtimeMinutes for samples of size 100 from each decade [1] as estimated from your first sample of 100 movies, [2] as calculated from the known population standard deviations for each decade, and [3] as estimated from the sampling distribution of sample means for each decade.
+```{r}
+```
 Step 3
 plot histograms of the distribution of runtimeMinutes for each decade
 
@@ -165,6 +305,7 @@ years_of_education_stats$mean
 #means <- colMeans(z[, c("height", "weight", "age", "zombies_killed", "years_of_education")])
 #sds <- apply(z[, c("height", "weight", "age", "zombies_killed", "years_of_education")], 2, sd)
 ```
+
 # Step 3 Use {ggplot} and make boxplots of each of these variables by gender.
 ```{r}
 boxplot(z$height ~ z$gender)
@@ -178,7 +319,9 @@ boxplot(z$height ~ z$gender)
 
 # Step 4 Use {ggplot} and make scatterplots of height and weight in relation to age (i.e., use age as the  variable), using different colored points for males versus females. Do these variables seem to be related? In what way?
 
-Yes, there seems to be a positive correlation between weight and age for both females and males. The average male weight for this sample size seems higher(heavier) than the female average.
+Yes, there seems to be a positive correlation between weight and age for both females and males. The average male weight for this sample size seems higher (heavier) than the female average.
+
+Yes, there seems to be a positive correlation between height and age for both females and males. The average male height for this sample size seems higher (taller) than the female average.
 
 ```{r}
 ggplot(z, aes(x = age, y = height, color = gender)) +
@@ -195,6 +338,11 @@ ggplot(z, aes(x = age, y = weight, color = gender)) +
 #Step 5
 
 Using histograms and Q-Q plots, check whether each of the quantitative variables seem to be drawn from a normal distribution. Which seem to be and which do not?
+
+##Height, weight, age, seem like a normal histogram distributions.
+##Zombie kills and education are a little more off than normal.
+##Same trend with the QQ plots
+
 variables =(height, weight, age, number of zombies_killed, and years_of_education
 
 #Here I create histograms of each quantitative variable.
@@ -283,11 +431,35 @@ survivormean_zombies_killed
 
 survivormean_years_of_education <- mean(survivorsubset$years_of_education)
 survivormean_years_of_education
+# standard deviation
+survivorsd_height <- sd(survivorsubset$height)
+survivorsd_height
 
-#mean_values
+survivorsd_weight <- sd(survivorsubset$weight)
+survivorsd_weight
 
-#sd_values <- tapply(z$runtimeMinutes, a$decade, sd)
-#sd_values
+survivorsd_age <- sd(survivorsubset$age)
+survivorsd_age
+
+survivorsd_zombies_killed <- sd(survivorsubset$zombies_killed)
+survivorsd_zombies_killed
+
+
+survivorsd_years_of_education <- sd(survivorsubset$years_of_education)
+survivorsd_years_of_education
+
+```
+#
+
+percent_ci <- 95
+alpha <- 1 - percent_ci/100  # alpha = 0.05
+lower <- m + qnorm(alpha/2) * se
+# where qnorm(alpha /2) is the 2.5% quantile of the standard normal
+# distribution
+upper <- m + qnorm(1 - alpha/2) * se
+# where qnorm(1 - alpha / 2) is the 97.5% quantile of the standard normal
+# distribution
+(ci <- c(lower, upper))
 ```
 
 
